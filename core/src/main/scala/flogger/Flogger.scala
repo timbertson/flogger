@@ -6,9 +6,11 @@ import java.util.Map as JavaMap
 import java.util.HashMap
 import scala.reflect.ClassTag
 import cats.effect.kernel.Sync
+import scala.jdk.CollectionConverters.*
 
-// Log output is a place to send logs. It should not be used directly by user code, but
-// typically there's an implicit one per class, with a logger name matching the class
+// Log output is a place to send logs. Typically there's an implicit one
+// per class, with a logger name matching the class.
+// You will mostly interact with the `LogCtx` API instead
 trait LogOutput[F[_]] {
 	val name: String
 	def log(level: Level, ctx: JavaMap[String, String], msg: => String, error: Throwable): F[Unit]
@@ -16,24 +18,22 @@ trait LogOutput[F[_]] {
 	def isEnabledFor(level: Level): F[Boolean]
 }
 
+// construct slf4j loggers
 def getLogger[F[_]](name: String)(implicit F: Sync[F]): LogOutput[F] = Slf4jOutput[F](name)
 def getLogger[F[_]](cls: Class[?])(implicit F: Sync[F]): LogOutput[F] = getLogger[F](cls.getName)
 def getLogger[F[_], Cls](implicit ct: ClassTag[Cls], F: Sync[F]): LogOutput[F] = getLogger[F](ct.getClass().getName())
 
-// trait Logging[F[_]] {
-// 	protected implicit val logOutput: LogOutput[F] = getLogger(this.getClass())
-// }
-
-// Log is the core trait. It manages context and provides the logging API, although
+// Log is the main trait. It manages context and provides the logging API, although
 // the heavy lifting is done by the implicit LogOutput
 trait Log[F[_]] {
-	// core required methods
-	def log(level: Level, msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit]
-	def log(level: Level, msg: => String)(implicit output: LogOutput[F]): F[Unit]
-	
+	// overrideable hook for intercepting logs
+	def output(implicit implicitOutput: LogOutput[F]): LogOutput[F] = implicitOutput
+
+	// unsafe because this is mutable, but you should never mutate it
+	def unsafeContext: java.util.Map[String, String]
 	def addContext(ctx: (String, String)*): Log[F]
 
-	// user API with trivial implementationa
+	// -- user API with trivial implementations --
 	def isEnabledFor(level: Level)(implicit output: LogOutput[F]): F[Boolean] = {
 		output.isEnabledFor(level)
 	}
@@ -42,39 +42,33 @@ trait Log[F[_]] {
 		block(this.addContext(ctx*))
 	}
 	
-	def error(msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = log(Level.Error, msg, error)
-	def error(msg: => String)(implicit output: LogOutput[F]): F[Unit] = log(Level.Error, msg)
+	def error(msg: => String, error: Throwable)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Error, unsafeContext, msg, error)
+	def error(msg: => String)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Error, unsafeContext, msg)
 
-	def warn(msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = log(Level.Warn, msg, error)
-	def warn(msg: => String)(implicit output: LogOutput[F]): F[Unit] = log(Level.Warn, msg)
+	def warn(msg: => String, error: Throwable)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Warn, unsafeContext, msg, error)
+	def warn(msg: => String)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Warn, unsafeContext, msg)
 
-	def info(msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = log(Level.Info, msg, error)
-	def info(msg: => String)(implicit output: LogOutput[F]): F[Unit] = log(Level.Info, msg)
+	def info(msg: => String, error: Throwable)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Info, unsafeContext, msg, error)
+	def info(msg: => String)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Info, unsafeContext, msg)
 
-	def debug(msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = log(Level.Debug, msg, error)
-	def debug(msg: => String)(implicit output: LogOutput[F]): F[Unit] = log(Level.Debug, msg)
+	def debug(msg: => String, error: Throwable)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Debug, unsafeContext, msg, error)
+	def debug(msg: => String)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Debug, unsafeContext, msg)
 
-	def trace(msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = log(Level.Trace, msg, error)
-	def trace(msg: => String)(implicit output: LogOutput[F]): F[Unit] = log(Level.Trace, msg)
+	def trace(msg: => String, error: Throwable)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Trace, unsafeContext, msg, error)
+	def trace(msg: => String)(implicit implicitOutput: LogOutput[F]): F[Unit] = this.output.log(Level.Trace, unsafeContext, msg)
 }
 
 object Log {
-	private val emptyCtx = new HashMap[String, String](0)
+	private [flogger] val emptyCtx = new HashMap[String, String](0)
 
 	def empty[F[_]]: Log[F] = new Impl[F](emptyCtx)
 	
 	class Impl[F[_]](ctx: JavaMap[String, String]) extends Log[F] {
-		inline def log(level: Level, msg: => String)(implicit output: LogOutput[F]): F[Unit] = {
-			output.log(level, ctx, msg)
-		}
-		
-		inline def log(level: Level, msg: => String, error: Throwable)(implicit output: LogOutput[F]): F[Unit] = {
-			output.log(level, ctx, msg, error)
-		}
-
-		def addContext(ctx: (String, String)*): Log[F] = {
+		override def addContext(ctx: (String, String)*): Log[F] = {
 			new Impl[F](Impl.addContext(this.ctx, ctx))
 		}
+		
+		override def unsafeContext: java.util.Map[String, String] = ctx
 	}
 
 	object Impl {

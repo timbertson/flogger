@@ -1,1 +1,0 @@
-type IOLog = Log[IO]

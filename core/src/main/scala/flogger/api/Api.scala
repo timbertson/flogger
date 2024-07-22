@@ -16,10 +16,7 @@ object Level {
 	case object Trace extends Level
 }
 
-class Slf4jOutput[F[_]](logger: slf4j.Logger)(implicit F: Sync[F]) extends LogOutput[F] {
-
-	override val name: String = logger.getName()
-
+class Slf4jOutput[F[_]](override val name: String, logger: slf4j.Logger)(implicit F: Sync[F]) extends LogOutput[F] {
 	override def log(level: Level, ctx: ju.Map[String, String], msg: => String): F[Unit] =
 		logImpl(level, ctx, msg, null)
 
@@ -77,7 +74,6 @@ class Slf4jOutput[F[_]](logger: slf4j.Logger)(implicit F: Sync[F]) extends LogOu
 }
 
 object Slf4jOutput {
-	def apply[F[_]](name: String)(implicit F: Sync[F]): Slf4jOutput[F] = new Slf4jOutput[F](
-		slf4j.LoggerFactory.getLogger(name)
-	)
+	def apply[F[_]](name: String)(implicit F: Sync[F]): Slf4jOutput[F] =
+		new Slf4jOutput[F](name, slf4j.LoggerFactory.getLogger(name))
 }

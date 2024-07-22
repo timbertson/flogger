@@ -40,7 +40,11 @@ lazy val core = (project in file("core"))
 lazy val root = (project in file("."))
   .settings(
     name := "flogger-root-nopublish",
-    libraryDependencies += "com.disneystreaming" %% "weaver-cats" % weaverVersion % Test,
+    libraryDependencies ++= Seq(
+      "com.disneystreaming" %% "weaver-cats" % weaverVersion % Test,
+      "ch.qos.logback" % "logback-classic" % "1.5.6" % Test,
+    ),
+ 
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     // fork := true,
   ).dependsOn(core, cats, weaver)
