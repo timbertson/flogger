@@ -44,6 +44,7 @@ lazy val bench = (project in file("bench"))
         "org.typelevel" %% "cats-effect-kernel" % catsEffectVersion,
         "org.slf4j" % "slf4j-api" % "2.0.13",
         "org.typelevel" %% "log4cats-slf4j" % "2.7.0",
+        "ch.qos.logback" % "logback-classic" % "1.5.6",
       )
     },
   ).enablePlugins(JmhPlugin)
