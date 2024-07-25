@@ -1,9 +1,8 @@
-ThisBuild / scalaVersion := "3.4.2"
-
 val catsEffectVersion = "3.5.4"
 val weaverVersion = "0.8.3"
 
 lazy val cats = (project in file("cats"))
+  .settings(ScalaProject.publicProjectSettings)
   .settings(
     name := "flogger-cats",
     libraryDependencies ++= {
@@ -14,6 +13,7 @@ lazy val cats = (project in file("cats"))
   ).dependsOn(core)
 
 lazy val weaver = (project in file("weaver"))
+  .settings(ScalaProject.publicProjectSettings)
   .settings(
     name := "flogger-weaver",
     libraryDependencies ++= {
@@ -26,6 +26,7 @@ lazy val weaver = (project in file("weaver"))
 
 
 lazy val core = (project in file("core"))
+  .settings(ScalaProject.publicProjectSettings)
   .settings(
     name := "flogger",
     libraryDependencies ++= {
@@ -37,8 +38,9 @@ lazy val core = (project in file("core"))
   )
 
 lazy val bench = (project in file("bench"))
+  .settings(ScalaProject.hiddenProjectSettings)
   .settings(
-    name := "flogger-bench",
+    name := "flogger-bench-internal",
     libraryDependencies ++= {
       Seq(
         "org.typelevel" %% "cats-effect-kernel" % catsEffectVersion,
@@ -51,8 +53,9 @@ lazy val bench = (project in file("bench"))
   .dependsOn(cats)
 
 lazy val root = (project in file("."))
+  .settings(ScalaProject.hiddenProjectSettings)
   .settings(
-    name := "flogger-root-nopublish",
+    name := "flogger-root-internal",
     libraryDependencies ++= Seq(
       "com.disneystreaming" %% "weaver-cats" % weaverVersion % Test,
       "ch.qos.logback" % "logback-classic" % "1.5.6" % Test,
@@ -63,3 +66,4 @@ lazy val root = (project in file("."))
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     // fork := true,
   ).dependsOn(core, cats, weaver)
+  .aggregate(core, cats, weaver, bench)

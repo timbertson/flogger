@@ -1,6 +1,6 @@
 package flogger
-import cats.effect.IO
-import cats.effect.SyncIO
+import _root_.cats.effect.IO
+import _root_.cats.effect.SyncIO
 
 type IOLog = Log[IO]
 
@@ -9,5 +9,5 @@ trait IOLogging {
 }
 
 trait SyncLogging {
-	protected implicit val logOutputSync: LogOutput[SyncIO] = getLogger(this.getClass)
+	protected implicit val logOutputSync: LogOutput[SyncIO] = getLogger[SyncIO](this.getClass)
 }
