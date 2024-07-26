@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="297mm"
+   height="210mm"
+   viewBox="0 0 297 210"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="flogger.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.3115105"
+     inkscape:cx="605.79006"
+     inkscape:cy="386.57717"
+     inkscape:window-width="2768"
+     inkscape:window-height="1371"
+     inkscape:window-x="8"
+     inkscape:window-y="33"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="224.93149"
+       y="309.56672"
+       width="683.18174"
+       height="145.63361"
+       id="rect3" />
+    <rect
+       x="224.93149"
+       y="309.56671"
+       width="683.18176"
+       height="145.63361"
+       id="rect3-2" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#c5c5c5;fill-opacity:1;stroke-width:4.98594;stroke-linecap:round"
+       id="rect2"
+       width="194.67851"
+       height="41.558311"
+       x="33.085262"
+       y="78.274887"
+       inkscape:export-filename="flogger.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,19.568722,16.137824)"
+       id="text2"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:'Heiti SC';-inkscape-font-specification:'Heiti SC';white-space:pre;shape-inside:url(#rect3);fill:#d0d0d0;fill-opacity:1;stroke-width:26.0787;stroke-linecap:round"><tspan
+         x="224.93164"
+         y="344.12641"
+         id="tspan8"><tspan
+           style="letter-spacing:-4.26px;fill:#a48260"
+           id="tspan1">[</tspan><tspan
+           dx="1.5499997"
+           style="letter-spacing:-5.81px;fill:#a48260"
+           id="tspan4">  </tspan><tspan
+           dx="-1.5799994"
+           style="letter-spacing:-4.23px;fill:#a48260"
+           id="tspan5">]</tspan><tspan
+           dx="-4.2300034"
+           style="font-weight:300;-inkscape-font-specification:'Heiti SC Light';fill:#6c6c6c"
+           id="tspan7">logger</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,27.08292,17.629367)"
+       id="text2-4"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:'Heiti SC';-inkscape-font-specification:'Heiti SC';white-space:pre;shape-inside:url(#rect3-2);fill:#d0d0d0;fill-opacity:1;stroke-width:26.0787;stroke-linecap:round"><tspan
+         x="224.93164"
+         y="340.28639"
+         id="tspan10"><tspan
+           style="baseline-shift:baseline;fill:#3e0964"
+           id="tspan9">
+</tspan></tspan><tspan
+         x="224.93164"
+         y="340.28639"
+         id="tspan12"><tspan
+           style="fill:#a65918"
+           id="tspan11">F</tspan></tspan></text>
+  </g>
+</svg>
