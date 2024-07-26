@@ -6,12 +6,14 @@ import flogger.*
 import flogger.Log
 import cats.effect.IO
 import cats.effect.SyncIO
+import cats.effect.IOApp
 
-object ExampleTest extends SimpleIOSuite with IOLogging {
-	test("sample usage") {
-		toplevelFunction(using Log.empty).map(succeed)
+object ExampleMain extends IOApp.Simple with IOLogging {
+	override def run: IO[Unit] = {
+		implicit val rootLog: Log[IO] = Log.empty
+		toplevelFunction()
 	}
-	
+
 	def toplevelFunction(implicit log: Log[IO]) = {
 		for {
 			_ <- log.info("Welcome!")
@@ -70,4 +72,12 @@ object SyncExample extends SyncLogging {
 			"You can use SyncIO and the convenience functions in flogger.sync.* to make this easy."
 		)
 	}
+}
+
+object ExampleTest extends SimpleIOSuite with IOLogging {
+	// run the example as a test (no real assertions though)
+	test("sample usage") {
+		ExampleMain.run.map(succeed)
+	}
+	
 }

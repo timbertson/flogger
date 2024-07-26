@@ -10,7 +10,7 @@ import scala.jdk.CollectionConverters.*
 
 // Log output is a place to send logs. Typically there's an implicit one
 // per class, with a logger name matching the class.
-// You will mostly interact with the `LogCtx` API instead
+// You will mostly interact with the `Log` API instead
 trait LogOutput[F[_]] {
 	val name: String
 	def log(level: Level, ctx: JavaMap[String, String], msg: => String, error: Throwable): F[Unit]
@@ -18,10 +18,12 @@ trait LogOutput[F[_]] {
 	def isEnabledFor(level: Level): F[Boolean]
 }
 
-// construct slf4j loggers
-def getLogger[F[_]](name: String)(implicit F: Sync[F]): LogOutput[F] = Slf4jOutput[F](name)
-def getLogger[F[_]](cls: Class[?])(implicit F: Sync[F]): LogOutput[F] = getLogger[F](cls.getName)
-def getLogger[F[_], Cls](implicit ct: ClassTag[Cls], F: Sync[F]): LogOutput[F] = getLogger[F](ct.getClass().getName())
+object LogOutput {
+	// construct slf4j loggers
+	def apply[F[_]](name: String)(implicit F: Sync[F]): LogOutput[F] = Slf4jOutput[F](name)
+	def apply[F[_]](cls: Class[?])(implicit F: Sync[F]): LogOutput[F] = apply[F](cls.getName)
+	def apply[F[_], Cls](implicit ct: ClassTag[Cls], F: Sync[F]): LogOutput[F] = apply[F](ct.getClass().getName())
+}
 
 // Log is the main trait. It manages context and provides the logging API, although
 // the heavy lifting is done by the implicit LogOutput
@@ -62,7 +64,11 @@ object Log {
 	private [flogger] val emptyCtx = new HashMap[String, String](0)
 
 	def empty[F[_]]: Log[F] = new Impl[F](emptyCtx)
-	
+
+	// Make a logger in G[_] using a logger's context (potentially in a different F[_]).
+	// This is mostly useful to get a Log[SyncIO] from a Log[IO]
+	def from[F[_], G[_]](source: Log[F]): Log[G] = new Impl[G](source.unsafeContext)
+
 	class Impl[F[_]](ctx: JavaMap[String, String]) extends Log[F] {
 		override def addContext(ctx: (String, String)*): Log[F] = {
 			new Impl[F](Impl.addContext(this.ctx, ctx))
