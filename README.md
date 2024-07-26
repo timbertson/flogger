@@ -8,6 +8,14 @@ The primary difference is that it has separate notion of a `LogOutput` (the unde
 
 When using `log4cats` in projects, I always ended up needing to construct a wrapper which allowed me to pass around context separately from the actualy logger, because log4cats requires you to pass an explicit `ctx: Map[String, String]` at every log site, but my context was typically "whatever was passed in from the caller".
 
+## Getting started
+
+```scala
+libraryDependencies += "net.gfxmonk" %% "flogger" % "VERSION" // check github tags for latest release
+```
+
+## Usage
+
 Idiomatic usage looks like this:
 
 ```scala
@@ -50,7 +58,7 @@ More detailed usage can be found in [src/test/scala/flogger/test/Example.scala](
 
 The `flogger-weaver` module adds a handy implicit conversion from a weaver `Logger` to a flogger `Log`, so output from a test will be captured. It's in the `flogger` namespace, so `import flogger.*` will bring it in scope. You need to make the weaver `Logger` implicit too, as in:
 
-```
+```scala
 loggedTest("some functionality") { implicit log =>
 	// you can call any function that accepts an implicit `flogger.Log[F]`
 }
