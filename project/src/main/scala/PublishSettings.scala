@@ -3,6 +3,9 @@
 import sbt._
 import Keys._
 import xerial.sbt.Sonatype.SonatypeKeys._
+import xerial.sbt.Sonatype.sonatypeCentralHost
+
+ThisBuild / sonatypeCredentialHost := sonatypeCentralHost
 
 object ScalaProject {
 	val hiddenProjectSettings = Seq(

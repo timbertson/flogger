@@ -67,3 +67,5 @@ lazy val root = (project in file("."))
     // fork := true,
   ).dependsOn(core, cats, weaver)
   .aggregate(core, cats, weaver, bench)
+
+ThisBuild / versionScheme := Some("semver-spec")
